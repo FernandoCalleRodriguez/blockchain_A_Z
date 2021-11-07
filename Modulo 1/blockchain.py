@@ -65,3 +65,28 @@ class Blockchain:
                  
 #Parte 2 - Minado de un Bloque de la Cadena
 
+# 2.1 Crear una aplicación web para poder llamar desde postman
+app = Flask(__name__)
+    
+    
+# 2.2 Crear una instancia blockchain
+blockchain = Blockchain()
+
+# 2.3 Minar un nuevo bloque
+@app.route('/mine_block', method=['GET'])
+def mine_block():
+    previous_block = blockchain.get_previous_block()
+    previous_proof = previous_block['proof']
+    proof = blockchain.proof_of_work(previous_proof)
+    previous_hash = blockchain.hash(previous_block)
+    block = blockchain.create_block(proof, previous_hash)
+    
+    response = {
+        'message': '¡Enhorabuena, has minado un nuevo bloque!',
+        'index' : block['index'],
+        'timestamp' : block['timestamp'],
+        'proof' :block['proof'],
+        'previous_hash' : block['previous_hash']
+    }
+    return jsonify(response),200 
+    #result = blockchain.is_chain_valid(chain)
