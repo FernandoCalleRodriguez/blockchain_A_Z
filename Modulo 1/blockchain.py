@@ -73,7 +73,7 @@ app = Flask(__name__)
 blockchain = Blockchain()
 
 # 2.3 Minar un nuevo bloque
-@app.route('/mine_block', method=['GET'])
+@app.route('/mine_block', methods=['GET'])
 def mine_block():
     previous_block = blockchain.get_previous_block()
     previous_proof = previous_block['proof']
@@ -90,7 +90,7 @@ def mine_block():
     return jsonify(response),200 
     
 # Obtener la cadena de bloques completo
-@app.route('/get_chain', method=['GET'])
+@app.route('/get_chain', methods=['GET'])
 def get_chain():
     response ={
         'chain': blockchain.chain,
