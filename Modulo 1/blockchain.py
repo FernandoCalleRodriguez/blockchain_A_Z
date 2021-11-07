@@ -80,7 +80,6 @@ def mine_block():
     proof = blockchain.proof_of_work(previous_proof)
     previous_hash = blockchain.hash(previous_block)
     block = blockchain.create_block(proof, previous_hash)
-    
     response = {
         'message': '¡Enhorabuena, has minado un nuevo bloque!',
         'index' : block['index'],
@@ -89,4 +88,14 @@ def mine_block():
         'previous_hash' : block['previous_hash']
     }
     return jsonify(response),200 
-    #result = blockchain.is_chain_valid(chain)
+    
+# Obtener la cadena de bloques completo
+@app.route('/get_chain', method=['GET'])
+def get_chain():
+    response ={
+        'chain': blockchain.chain,
+        'length_chain': len(blockchain.chain)}
+    return jsonify(response),200 
+
+ #Ejecutar la app
+app.run(host = '0.0.0.0', port = 5000)
