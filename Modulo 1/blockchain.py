@@ -44,8 +44,8 @@ class Blockchain:
         return new_proof
 
     def hash(self, block):
-        encode_block = json.dump(block, sort_keys = True).encode()
-        return hashlib.sha256(encode_block).hexdigest()
+        encoded_block = json.dumps(block, sort_keys = True).encode()
+        return hashlib.sha256(encoded_block).hexdigest()
     
     def is_chain_valid(self, chain):
         previous_block = chain[0]
@@ -62,18 +62,20 @@ class Blockchain:
             previous_block = block
             block_index += 1
         return True
+    
                  
 #Parte 2 - Minado de un Bloque de la Cadena
 
 # 2.1 Crear una aplicación web para poder llamar desde postman
 app = Flask(__name__)
-    
+# Si se obtiene un error 500, actualizar flask, reiniciar spyder y ejecutar la siguiente línea
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
     
 # 2.2 Crear una instancia blockchain
 blockchain = Blockchain()
 
 # 2.3 Minar un nuevo bloque
-@app.route('/mine_block', methods=['GET'])
+@app.route('/mine_block', methods=['GET'])  
 def mine_block():
     previous_block = blockchain.get_previous_block()
     previous_proof = previous_block['proof']
