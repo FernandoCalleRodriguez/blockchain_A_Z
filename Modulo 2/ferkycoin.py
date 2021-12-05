@@ -17,20 +17,25 @@ import hashlib
 import json
 from flask import Flask, jsonify, request
 import requests 
+from uuid import uuid4
+from urllib.parse import urlparse
 
 #Parte 1 - Crear la Cadena de Bloques
 class Blockchain:
     def __init__(self):
         self.chain = []
-        self.create_block(proof = 1, previous_hash = '0')
+        self.transactions = []
+        self.create_block(proof = 1, previous_hash = '0', )
         
     def create_block(self, proof, previous_hash):
         block = {
             'index' : len(self.chain)+1,
             'timestamp' : str(datetime.datetime.now()),
             'proof' : proof,
-            'previous_hash' : previous_hash
+            'previous_hash' : previous_hash,
+            'transactions' : self.transactions
             }
+        self.transactions = []
         self.chain.append(block)
         return block
     
@@ -68,6 +73,13 @@ class Blockchain:
             block_index += 1
         return True
     
+    def add_transaction(self, sender, receiver, amount):
+        self.transactions.append({'sender' : sender,
+            'receiver' : receiver,
+            'amount' : amount})
+        previous_block = self.get_previous_block()
+        return previous_block['index'] + 1
+        
                  
 #Parte 2 - Minado de un Bloque de la Cadena
 
@@ -106,3 +118,5 @@ def get_chain():
 
  #Ejecutar la app
 app.run(host = '0.0.0.0', port = 5000)
+
+#Parte 3 - Descentralizar la cadena de bloques
