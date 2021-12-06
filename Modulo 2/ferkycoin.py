@@ -146,9 +146,6 @@ def get_chain():
         'length_chain': len(blockchain.chain)}
     return jsonify(response),200 
 
-# Ejecutar la app
-app.run(host = '0.0.0.0', port = 5000)
-
 # Añadir una nueva transacción a la cadena de bloques
 @app.route('/add_transaction', methods=['POST'])
 def add_transaction():
@@ -163,3 +160,20 @@ def add_transaction():
        
 
 #Parte 3 - Descentralizar la cadena de bloques
+
+# Conectar nuevos nodos
+@app.route('/connect_node', methods=['POST'])
+def connect_node():
+    fichero_json = request.get_json()
+    nodes = fichero_json.get('nodes')
+    if nodes is None:
+            return 'No hay nodos para añadir', 400
+    for node in nodes:
+        blockchain.add_node(node)
+    response ={
+        'message': 'Todos los nodos han sido conectados. La cadena contiene ahora los siguientes nodos:',
+        'total_nodes' : list(blockchain.nodes)}
+    return jsonify(response),201
+
+# Ejecutar la app
+app.run(host = '0.0.0.0', port = 5000)
