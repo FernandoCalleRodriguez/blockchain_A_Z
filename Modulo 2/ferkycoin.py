@@ -5,9 +5,9 @@ Created on Sat Dic  5 10:06:55 2021
 @author: ferky
 """
 
-#Módulo 2: Crear una Criptomoneda
+# Módulo 2: Crear una Criptomoneda
 
-#Para instalar:
+# Para instalar:
 # Flask == 1.1.2: pip install Flask==1.1.2
 # requests==2.25.1: pip install requests==2.25.1
 
@@ -17,7 +17,7 @@ import hashlib
 import json
 from flask import Flask, jsonify, request
 import requests 
-from uuid import uuid4
+from uuid import uuid4 
 from urllib.parse import urlparse
 
 #Parte 1 - Crear la Cadena de Bloques
@@ -106,12 +106,15 @@ class Blockchain:
             
         
         
-#Parte 2 - Minado de un Bloque de la Cadena
+# Parte 2 - Minado de un Bloque de la Cadena
 
 # 2.1 Crear una aplicación web para poder llamar desde postman
 app = Flask(__name__)
 # Si se obtiene un error 500, actualizar flask, reiniciar spyder y ejecutar la siguiente línea
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
+
+# Crear la dirección del nodo en el puerto 5000
+node_address = str(uuid4()).replace('-','')
     
 # 2.2 Crear una instancia blockchain
 blockchain = Blockchain()
@@ -123,13 +126,15 @@ def mine_block():
     previous_proof = previous_block['proof']
     proof = blockchain.proof_of_work(previous_proof)
     previous_hash = blockchain.hash(previous_block)
+    blockchain.add_transaction(sender = node_address, receiver = "Juan Gabriel", amount = 10)
     block = blockchain.create_block(proof, previous_hash)
     response = {
         'message': '¡Enhorabuena, has minado un nuevo bloque!',
         'index' : block['index'],
         'timestamp' : block['timestamp'],
         'proof' :block['proof'],
-        'previous_hash' : block['previous_hash']
+        'previous_hash' : block['previous_hash'],
+        'transactions' : block['transactions']
     }
     return jsonify(response),200 
     
@@ -141,7 +146,20 @@ def get_chain():
         'length_chain': len(blockchain.chain)}
     return jsonify(response),200 
 
- #Ejecutar la app
+# Ejecutar la app
 app.run(host = '0.0.0.0', port = 5000)
+
+# Añadir una nueva transacción a la cadena de bloques
+@app.route('/add_transaction', methods=['POST'])
+def add_transaction():
+    fichero_json = request.get_json()
+    transaction_keys = ['sender','receiver', 'amount']
+    if not all(key in fichero_json for key in transaction_keys):
+        return 'Faltan algunos elementos de la transacción', 400
+    index = blockchain.add_transaction(fichero_json['sender'], fichero_json['receiver'], fichero_json['amount'])
+    response ={
+        'message': f'La transacción será añadida al bloque {index}'}
+    return jsonify(response),201
+       
 
 #Parte 3 - Descentralizar la cadena de bloques
