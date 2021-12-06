@@ -138,6 +138,16 @@ def mine_block():
     }
     return jsonify(response),200 
     
+# Comprobar si la cadena de bloques es válida
+@app.route('/is_valid', methods=['GET'])
+def is_valid():
+    is_valid = blockchain.is_chain_valid(blockchain.chain)
+    if is_valid:
+        response = {'message': 'Todo correcto. Lac adena de bloques es válida.'}
+    else:
+        response = {'message': 'Error, La cadena de bloques no es válida.'}
+    return jsonify(response),200 
+
 # Obtener la cadena de bloques completo
 @app.route('/get_chain', methods=['GET'])
 def get_chain():
@@ -174,6 +184,16 @@ def connect_node():
         'message': 'Todos los nodos han sido conectados. La cadena contiene ahora los siguientes nodos:',
         'total_nodes' : list(blockchain.nodes)}
     return jsonify(response),201
+
+# Reemplazar la cadena por la más larga  ( si es necesario)
+@app.route('/replace_chain', methods=['GET'])
+def replace_chain():   
+    is_change_replace = blockchain.replace_chain()
+    if is_change_replace:
+        response = {'message': 'La cadena ha sido reemplazada.'}
+    else:
+        response = {'message': 'La cadena NO ha sido reemplazada.'}
+    return jsonify(response),200 
 
 # Ejecutar la app
 app.run(host = '0.0.0.0', port = 5000)
