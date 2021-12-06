@@ -190,9 +190,11 @@ def connect_node():
 def replace_chain():   
     is_change_replace = blockchain.replace_chain()
     if is_change_replace:
-        response = {'message': 'La cadena ha sido reemplazada.'}
+        response = {'message': 'La cadena ha sido reemplazada.',
+                    'new_chain' : blockchain.chain}
     else:
-        response = {'message': 'La cadena NO ha sido reemplazada.'}
+        response = {'message': 'La cadena NO ha sido reemplazada.',
+                    'chain' : blockchain.chain}
     return jsonify(response),200 
 
 # Ejecutar la app
